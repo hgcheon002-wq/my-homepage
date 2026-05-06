@@ -1,0 +1,966 @@
+<!DOCTYPE html>
+<html lang="ko" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CHEON | 개인 홈페이지</title>
+  <!-- Font Awesome: SNS 아이콘 등에 사용 -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <!-- Google Fonts: 한국어 지원 폰트 -->
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&display=swap" rel="stylesheet">
+
+  <style>
+    /* ========================================================
+       CSS 변수 — 테마 색상을 한 곳에서 관리하는 "저장소"
+       :root = 라이트 모드 기본값
+       [data-theme="dark"] = 다크 모드일 때 덮어쓰는 값
+    ======================================================== */
+    :root {
+      --bg: #f0f2f5;
+      --text: #333;
+      --text-sub: #666;
+      --card: #ffffff;
+      --border: #e0e0e0;
+      --shadow: rgba(0, 0, 0, 0.08);
+      --gradient: linear-gradient(135deg, #667eea, #764ba2);
+    }
+
+    [data-theme="dark"] {
+      --bg: #1a1a2e;
+      --text: #e0e0e0;
+      --text-sub: #aaaaaa;
+      --card: #16213e;
+      --border: #2a2a4a;
+      --shadow: rgba(0, 0, 0, 0.3);
+    }
+
+    /* ========================================================
+       기본 리셋 — 모든 요소의 여백, 패딩, 박스모델 초기화
+    ======================================================== */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box; /* padding이 width 안쪽으로 계산되도록 */
+    }
+
+    html {
+      scroll-behavior: smooth; /* 앵커 클릭 시 부드러운 스크롤 */
+    }
+
+    body {
+      font-family: 'Noto Sans KR', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      transition: background 0.3s, color 0.3s; /* 테마 전환 시 부드러운 변화 */
+    }
+
+    /* ========================================================
+       내비게이션 바 — 화면 상단에 고정
+    ======================================================== */
+    nav {
+      position: fixed;      /* 스크롤해도 항상 위에 고정 */
+      top: 0;
+      width: 100%;
+      padding: 1rem 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: var(--card);
+      box-shadow: 0 2px 10px var(--shadow);
+      z-index: 100;         /* 다른 요소보다 앞에 표시 */
+      transition: background 0.3s;
+    }
+
+    /* 로고 텍스트: 그라디언트 색상 적용 */
+    .nav-logo {
+      font-weight: 700;
+      font-size: 1.2rem;
+      background: var(--gradient);
+      -webkit-background-clip: text;    /* 텍스트 영역에만 배경 적용 */
+      -webkit-text-fill-color: transparent; /* 기본 글자색을 투명하게 해서 배경이 보임 */
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 1.5rem;
+      list-style: none;
+      align-items: center;
+    }
+
+    .nav-links a {
+      text-decoration: none;
+      color: var(--text);
+      font-size: 0.9rem;
+      transition: color 0.2s;
+    }
+
+    .nav-links a:hover { color: #667eea; }
+
+    /* 다크모드 토글 버튼 */
+    .theme-toggle {
+      background: none;
+      border: 2px solid var(--border);
+      border-radius: 50px;
+      padding: 0.3rem 0.8rem;
+      cursor: pointer;
+      color: var(--text);
+      font-size: 0.85rem;
+      font-family: 'Noto Sans KR', sans-serif;
+      transition: all 0.2s;
+    }
+
+    .theme-toggle:hover {
+      border-color: #667eea;
+      color: #667eea;
+    }
+
+    /* ========================================================
+       섹션 공통 스타일
+    ======================================================== */
+    section {
+      padding: 6rem 2rem;
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+
+    /* 섹션 제목 */
+    .section-title {
+      font-size: 2rem;
+      font-weight: 700;
+      text-align: center;
+      margin-bottom: 0.5rem;
+    }
+
+    /* 제목 아래 강조 밑줄 */
+    .section-line {
+      width: 60px;
+      height: 4px;
+      background: var(--gradient);
+      border-radius: 2px;
+      margin: 0 auto 3rem;
+    }
+
+    /* ========================================================
+       기능 1. 히어로(Hero) 섹션 — 첫 인상 화면
+    ======================================================== */
+    #hero {
+      min-height: 100vh;           /* 화면 전체 높이 */
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding-top: 80px;           /* 고정 nav 높이만큼 위 여백 */
+    }
+
+    .hero-inner {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 1.5rem;
+    }
+
+    /* 프로필 사진 원형 박스 (실제 사진 없을 때 그라디언트+이모지로 대체) */
+    .profile-img {
+      width: 160px;
+      height: 160px;
+      border-radius: 50%;          /* 원형으로 만들기 */
+      background: var(--gradient);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 4rem;
+      color: white;
+      box-shadow: 0 8px 30px rgba(102, 126, 234, 0.4);
+    }
+
+    .hero-name {
+      font-size: 2.8rem;
+      font-weight: 700;
+    }
+
+    /* 타이핑 애니메이션이 들어갈 영역 */
+    .hero-tagline {
+      font-size: 1.3rem;
+      color: var(--text-sub);
+      min-height: 2rem;            /* 텍스트 없을 때도 공간 유지 */
+    }
+
+    /* 타이핑되는 텍스트에 그라디언트 색상 */
+    .hero-tagline .typed-text {
+      background: var(--gradient);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      font-weight: 700;
+    }
+
+    /* 깜박이는 커서 효과 */
+    .cursor {
+      display: inline-block;
+      width: 2px;
+      height: 1.2em;
+      background: #667eea;
+      margin-left: 2px;
+      animation: blink 0.7s infinite; /* 0.7초 주기로 깜박임 */
+      vertical-align: text-bottom;
+    }
+
+    @keyframes blink {
+      0%, 100% { opacity: 1; }
+      50%       { opacity: 0; }
+    }
+
+    /* 기술 스택 뱃지 목록 */
+    .tech-badges {
+      display: flex;
+      flex-wrap: wrap;             /* 화면 좁을 때 자동 줄바꿈 */
+      gap: 0.5rem;
+      justify-content: center;
+    }
+
+    .badge {
+      padding: 0.4rem 1rem;
+      border-radius: 50px;
+      font-size: 0.85rem;
+      font-weight: 500;
+      background: var(--card);
+      border: 1.5px solid var(--border);
+      color: var(--text);
+      box-shadow: 0 2px 6px var(--shadow);
+      transition: transform 0.2s;
+    }
+
+    .badge:hover { transform: translateY(-2px); }
+
+    /* CTA(Call To Action) 버튼 2개 */
+    .cta-buttons {
+      display: flex;
+      gap: 1rem;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+
+    /* 채워진 버튼 */
+    .btn-primary {
+      padding: 0.7rem 1.8rem;
+      border-radius: 50px;
+      background: var(--gradient);
+      color: white;
+      text-decoration: none;
+      font-weight: 600;
+      transition: transform 0.2s, box-shadow 0.2s;
+      box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(102, 126, 234, 0.55);
+    }
+
+    /* 테두리만 있는 버튼 */
+    .btn-outline {
+      padding: 0.7rem 1.8rem;
+      border-radius: 50px;
+      border: 2px solid #667eea;
+      color: #667eea;
+      text-decoration: none;
+      font-weight: 600;
+      transition: all 0.2s;
+    }
+
+    .btn-outline:hover {
+      background: #667eea;
+      color: white;
+    }
+
+    /* 스크롤 유도 화살표 — 아래위로 바운스 */
+    .scroll-hint {
+      margin-top: 0.5rem;
+      color: var(--text-sub);
+      font-size: 0.85rem;
+      animation: bounce 2s infinite;
+    }
+
+    @keyframes bounce {
+      0%, 100% { transform: translateY(0); }
+      50%       { transform: translateY(8px); }
+    }
+
+    /* ========================================================
+       기능 2. 프로젝트 포트폴리오 카드 갤러리
+    ======================================================== */
+
+    /* 카테고리 필터 탭 */
+    .filter-tabs {
+      display: flex;
+      gap: 0.5rem;
+      justify-content: center;
+      margin-bottom: 2rem;
+      flex-wrap: wrap;
+    }
+
+    .filter-btn {
+      padding: 0.5rem 1.2rem;
+      border-radius: 50px;
+      border: 1.5px solid var(--border);
+      background: var(--card);
+      color: var(--text-sub);
+      cursor: pointer;
+      font-size: 0.9rem;
+      font-family: 'Noto Sans KR', sans-serif;
+      transition: all 0.2s;
+    }
+
+    /* active = 현재 선택된 필터 탭 */
+    .filter-btn.active,
+    .filter-btn:hover {
+      background: var(--gradient);
+      color: white;
+      border-color: transparent;
+    }
+
+    /* CSS Grid: 항상 3열 고정 → 카드 3개가 한 줄에 나란히 */
+    .projects-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1.5rem;
+    }
+
+    .project-card {
+      background: var(--card);
+      border-radius: 16px;
+      overflow: hidden;            /* 썸네일이 카드 모서리 밖으로 나가지 않게 */
+      box-shadow: 0 4px 20px var(--shadow);
+      border: 1px solid var(--border);
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+
+    .project-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 8px 30px rgba(102, 126, 234, 0.2);
+    }
+
+    /* 썸네일 영역 — 이미지 없으면 그라디언트 배경 */
+    .card-thumbnail {
+      height: 180px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 3.5rem;
+      color: white;
+    }
+
+    .card-body { padding: 1.2rem; }
+
+    .card-title {
+      font-size: 1.1rem;
+      font-weight: 700;
+      margin-bottom: 0.4rem;
+    }
+
+    .card-desc {
+      font-size: 0.85rem;
+      color: var(--text-sub);
+      margin-bottom: 0.8rem;
+      line-height: 1.5;
+    }
+
+    .card-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.3rem;
+      margin-bottom: 1rem;
+    }
+
+    .card-tag {
+      padding: 0.2rem 0.6rem;
+      border-radius: 50px;
+      font-size: 0.75rem;
+      background: rgba(102, 126, 234, 0.1);
+      color: #667eea;
+      font-weight: 500;
+    }
+
+    .card-links {
+      display: flex;
+      gap: 0.5rem;
+    }
+
+    .card-links a {
+      flex: 1;                     /* 두 버튼이 공간을 반반 나눔 */
+      padding: 0.45rem;
+      text-align: center;
+      border-radius: 8px;
+      text-decoration: none;
+      font-size: 0.85rem;
+      font-weight: 600;
+      transition: all 0.2s;
+    }
+
+    .link-github {
+      border: 1.5px solid var(--border);
+      color: var(--text);
+    }
+
+    .link-github:hover { border-color: #667eea; color: #667eea; }
+
+    .link-demo {
+      background: var(--gradient);
+      color: white;
+    }
+
+    .link-demo:hover { opacity: 0.85; }
+
+    /* 필터에 걸려 숨겨진 카드 */
+    .project-card.hidden { display: none; }
+
+    /* ========================================================
+       기능 4. 블로그 / 학습 기록 섹션
+    ======================================================== */
+    .blog-list {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+
+    .blog-item {
+      background: var(--card);
+      border-radius: 12px;
+      padding: 1.2rem 1.5rem;
+      display: flex;
+      align-items: flex-start;
+      gap: 1.2rem;
+      border: 1px solid var(--border);
+      box-shadow: 0 2px 10px var(--shadow);
+      transition: transform 0.2s, border-color 0.2s;
+      text-decoration: none;
+      color: inherit;
+    }
+
+    .blog-item:hover {
+      transform: translateX(5px); /* 오른쪽으로 살짝 이동 */
+      border-color: #667eea;
+    }
+
+    .blog-date {
+      font-size: 0.8rem;
+      color: var(--text-sub);
+      white-space: nowrap;         /* 날짜가 줄바꿈 안 되도록 */
+      min-width: 90px;
+      padding-top: 2px;
+    }
+
+    .blog-content { flex: 1; }
+
+    .blog-title {
+      font-size: 1rem;
+      font-weight: 700;
+      margin-bottom: 0.3rem;
+    }
+
+    .blog-summary {
+      font-size: 0.85rem;
+      color: var(--text-sub);
+      line-height: 1.5;
+    }
+
+    .blog-tags {
+      display: flex;
+      gap: 0.3rem;
+      flex-wrap: wrap;
+      margin-top: 0.5rem;
+    }
+
+    .blog-tag {
+      padding: 0.15rem 0.5rem;
+      border-radius: 50px;
+      font-size: 0.75rem;
+      background: rgba(118, 75, 162, 0.1);
+      color: #764ba2;
+      font-weight: 500;
+    }
+
+    /* ========================================================
+       기능 5. 연락처 + SNS 허브 섹션
+    ======================================================== */
+    #contact { text-align: center; }
+
+    .contact-box {
+      max-width: 600px;
+      margin: 0 auto;
+    }
+
+    .contact-desc {
+      font-size: 1rem;
+      color: var(--text-sub);
+      margin-bottom: 2rem;
+      line-height: 1.7;
+    }
+
+    /* SNS 아이콘 버튼 그리드 */
+    .sns-grid {
+      display: flex;
+      justify-content: center;
+      gap: 1rem;
+      flex-wrap: wrap;
+      margin-bottom: 2rem;
+    }
+
+    .sns-btn {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.4rem;
+      padding: 1rem 1.5rem;
+      border-radius: 16px;
+      text-decoration: none;
+      color: var(--text);
+      background: var(--card);
+      border: 1.5px solid var(--border);
+      transition: all 0.25s;
+      min-width: 90px;
+      box-shadow: 0 2px 8px var(--shadow);
+    }
+
+    .sns-btn:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 8px 24px rgba(102, 126, 234, 0.25);
+      border-color: transparent;
+    }
+
+    .sns-btn i    { font-size: 1.5rem; }
+    .sns-btn span { font-size: 0.8rem; font-weight: 600; }
+
+    /* SNS 각각의 브랜드 색상 */
+    .sns-github:hover    { background: #24292e; color: white; }
+    .sns-email:hover     { background: #ea4335; color: white; }
+    .sns-linkedin:hover  { background: #0077b5; color: white; }
+    .sns-instagram:hover { background: linear-gradient(135deg, #f58529, #dd2a7b, #8134af); color: white; }
+
+    /* 이메일 주소 표시 박스 */
+    .email-display {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.8rem;
+      padding: 0.8rem 1.5rem;
+      border-radius: 12px;
+      background: var(--card);
+      border: 1.5px solid var(--border);
+      font-size: 0.95rem;
+    }
+
+    .copy-btn {
+      background: var(--gradient);
+      color: white;
+      border: none;
+      border-radius: 8px;
+      padding: 0.3rem 0.8rem;
+      font-size: 0.8rem;
+      cursor: pointer;
+      font-family: 'Noto Sans KR', sans-serif;
+      transition: opacity 0.2s;
+    }
+
+    .copy-btn:hover { opacity: 0.85; }
+
+    /* ========================================================
+       푸터
+    ======================================================== */
+    footer {
+      text-align: center;
+      padding: 2rem;
+      color: var(--text-sub);
+      font-size: 0.85rem;
+      border-top: 1px solid var(--border);
+    }
+
+    /* ========================================================
+       반응형 — 화면 너비 600px 이하 (모바일)
+    ======================================================== */
+    @media (max-width: 600px) {
+      .hero-name  { font-size: 1.8rem; }
+      nav         { padding: 0.8rem 1rem; }
+      .nav-links  { gap: 0.8rem; }
+      section     { padding: 4rem 1rem; }
+      .projects-grid { grid-template-columns: 1fr; } /* 모바일에서는 1열로 */
+      .blog-item  { flex-direction: column; gap: 0.5rem; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ===================================================
+       내비게이션 바
+  =================================================== -->
+  <nav>
+    <div class="nav-logo">✦ CHEON</div>
+    <ul class="nav-links">
+      <li><a href="#hero">홈</a></li>
+      <li><a href="#portfolio">포트폴리오</a></li>
+      <li><a href="#blog">블로그</a></li>
+      <li><a href="#contact">연락처</a></li>
+      <!-- 기능 3: 다크/라이트 토글 버튼 -->
+      <li>
+        <button class="theme-toggle" onclick="toggleTheme()" id="themeBtn">
+          🌙 다크
+        </button>
+      </li>
+    </ul>
+  </nav>
+
+
+  <!-- ===================================================
+       기능 1. 히어로 섹션
+  =================================================== -->
+  <section id="hero">
+    <div class="hero-inner">
+
+      <!-- 프로필 사진: 실제 사진 URL로 교체 가능 -->
+      <div class="profile-img">👨‍💻</div>
+
+      <h1 class="hero-name">안녕하세요, CHEON입니다</h1>
+
+      <!-- 타이핑 애니메이션이 들어갈 자리 -->
+      <p class="hero-tagline">
+        저는 <span class="typed-text" id="typedText"></span><span class="cursor"></span>입니다
+      </p>
+
+      <!-- 기술 스택 뱃지 -->
+      <div class="tech-badges">
+        <span class="badge">HTML</span>
+        <span class="badge">CSS</span>
+        <span class="badge">JavaScript</span>
+        <span class="badge">React</span>
+        <span class="badge">Node.js</span>
+        <span class="badge">Python</span>
+      </div>
+
+      <!-- CTA 버튼 2개 -->
+      <div class="cta-buttons">
+        <a href="#portfolio" class="btn-primary">포트폴리오 보기</a>
+        <a href="#contact" class="btn-outline">연락하기</a>
+      </div>
+
+      <div class="scroll-hint">↓ 스크롤해서 더 보기</div>
+    </div>
+  </section>
+
+
+  <!-- ===================================================
+       기능 2. 프로젝트 포트폴리오 카드 갤러리
+  =================================================== -->
+  <section id="portfolio">
+    <h2 class="section-title">프로젝트</h2>
+    <div class="section-line"></div>
+
+    <!-- 카테고리 필터 탭 -->
+    <div class="filter-tabs">
+      <button class="filter-btn active" onclick="filterProjects('all', this)">전체</button>
+      <button class="filter-btn" onclick="filterProjects('consulting', this)">컨설팅</button>
+      <button class="filter-btn" onclick="filterProjects('si', this)">SI</button>
+      <button class="filter-btn" onclick="filterProjects('operation', this)">운영</button>
+    </div>
+
+    <!-- 카드들은 JS로 동적 생성 -->
+    <div class="projects-grid" id="projectsGrid"></div>
+  </section>
+
+
+  <!-- ===================================================
+       기능 4. 블로그 / 학습 기록 섹션
+  =================================================== -->
+  <section id="blog">
+    <h2 class="section-title">학습 기록</h2>
+    <div class="section-line"></div>
+    <!-- 포스트 목록은 JS로 동적 생성 -->
+    <div class="blog-list" id="blogList"></div>
+  </section>
+
+
+  <!-- ===================================================
+       기능 5. 연락처 + SNS 허브
+  =================================================== -->
+  <section id="contact">
+    <h2 class="section-title">연락처</h2>
+    <div class="section-line"></div>
+    <div class="contact-box">
+      <p class="contact-desc">
+        새로운 기회, 협업 제안, 또는 그냥 안부 인사도 환영합니다.<br>
+        아래 채널로 언제든 연락해 주세요!
+      </p>
+
+      <!-- SNS 아이콘 버튼들 -->
+      <div class="sns-grid">
+        <a href="https://github.com" target="_blank" rel="noopener" class="sns-btn sns-github">
+          <i class="fab fa-github"></i>
+          <span>GitHub</span>
+        </a>
+        <a href="https://linkedin.com" target="_blank" rel="noopener" class="sns-btn sns-linkedin">
+          <i class="fab fa-linkedin"></i>
+          <span>LinkedIn</span>
+        </a>
+        <!-- href는 JS가 설정 → 스팸봇이 이메일 수집 불가 -->
+        <a href="#" class="sns-btn sns-email" id="emailLink">
+          <i class="fas fa-envelope"></i>
+          <span>이메일</span>
+        </a>
+        <a href="https://instagram.com" target="_blank" rel="noopener" class="sns-btn sns-instagram">
+          <i class="fab fa-instagram"></i>
+          <span>Instagram</span>
+        </a>
+      </div>
+
+      <!-- 이메일 주소 표시 + 클립보드 복사 -->
+      <div class="email-display">
+        <i class="fas fa-envelope" style="color:#667eea"></i>
+        <span id="emailText">불러오는 중...</span>
+        <button class="copy-btn" onclick="copyEmail()">복사</button>
+      </div>
+    </div>
+  </section>
+
+
+  <!-- ===================================================
+       푸터
+  =================================================== -->
+  <footer>
+    <p>© 2026 CHEON. Made with ❤️ using HTML / CSS / JS</p>
+  </footer>
+
+
+  <script>
+    /* ========================================================
+       기능 3. 다크 / 라이트 테마 토글
+       CSS 변수를 통해 전체 색상이 한 번에 바뀜
+    ======================================================== */
+
+    // 즉시 실행 함수: 페이지 로드 시 저장된 테마 복원
+    (function initTheme() {
+      const saved = localStorage.getItem('theme');
+      if (saved) {
+        // 이전에 선택한 테마가 있으면 적용
+        document.documentElement.dataset.theme = saved;
+      } else if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+        // 없으면 OS 다크모드 설정 자동 감지
+        document.documentElement.dataset.theme = 'dark';
+      }
+      updateThemeBtn();
+    })();
+
+    // 버튼 클릭 시 라이트 ↔ 다크 전환
+    function toggleTheme() {
+      const isDark = document.documentElement.dataset.theme === 'dark';
+      const next = isDark ? 'light' : 'dark';
+      document.documentElement.dataset.theme = next;
+      localStorage.setItem('theme', next); // 브라우저에 기억
+      updateThemeBtn();
+    }
+
+    // 현재 테마에 맞게 버튼 텍스트 업데이트
+    function updateThemeBtn() {
+      const isDark = document.documentElement.dataset.theme === 'dark';
+      document.getElementById('themeBtn').textContent = isDark ? '☀️ 라이트' : '🌙 다크';
+    }
+
+
+    /* ========================================================
+       기능 1. 타이핑 애니메이션 (순수 JS, 라이브러리 없음)
+       글자를 한 자씩 쓰다가 다 쓰면 한 자씩 지우고 다음 문장으로
+    ======================================================== */
+
+    const typingTexts = [
+      '프론트엔드 개발자',
+      '웹 디자이너',
+      '문제 해결사',
+      '끊임없이 배우는 사람'
+    ];
+
+    let textIdx   = 0;     // 현재 보여주는 문장의 인덱스
+    let charIdx   = 0;     // 현재까지 타이핑된 글자 수
+    let isDeleting = false; // true면 지우는 중, false면 타이핑 중
+
+    const typedEl = document.getElementById('typedText');
+
+    function typeAnimation() {
+      const current = typingTexts[textIdx];
+
+      if (isDeleting) {
+        // 지우는 중: 마지막 글자 하나 제거
+        typedEl.textContent = current.slice(0, charIdx - 1);
+        charIdx--;
+      } else {
+        // 타이핑 중: 글자 하나 추가
+        typedEl.textContent = current.slice(0, charIdx + 1);
+        charIdx++;
+      }
+
+      // 문장 완성 → 1.8초 대기 후 삭제 시작
+      if (!isDeleting && charIdx === current.length) {
+        setTimeout(() => { isDeleting = true; }, 1800);
+      }
+
+      // 전부 지움 → 다음 문장으로 전환
+      if (isDeleting && charIdx === 0) {
+        isDeleting = false;
+        textIdx = (textIdx + 1) % typingTexts.length;
+      }
+
+      // 속도: 삭제는 빠르게(60ms), 타이핑은 보통(120ms)
+      setTimeout(typeAnimation, isDeleting ? 60 : 120);
+    }
+
+    typeAnimation(); // 애니메이션 시작
+
+
+    /* ========================================================
+       기능 2. 프로젝트 데이터 + 카드 렌더링
+    ======================================================== */
+
+    // 프로젝트 데이터 배열 — 카테고리별 1개씩, 총 3개 (한 줄 표시)
+    const projects = [
+      {
+        category: 'consulting', /* 컨설팅 */
+        icon: '📋',
+        gradient: 'linear-gradient(135deg, #667eea, #764ba2)',
+        title: '업무 프로세스 진단',
+        desc: '현황 분석 및 개선 방향 도출을 위한 업무 프로세스 컨설팅 수행',
+        tags: ['프로세스 분석', 'AS-IS/TO-BE', 'BPR'],
+        github: '#',
+        demo: '#'
+      },
+      {
+        category: 'si', /* SI (시스템 통합) */
+        icon: '🏗️',
+        gradient: 'linear-gradient(135deg, #4facfe, #00f2fe)',
+        title: 'ERP 구축 프로젝트',
+        desc: '중견 제조사 ERP 시스템 신규 구축 및 현업 데이터 마이그레이션',
+        tags: ['ERP', 'Java', 'Oracle DB'],
+        github: '#',
+        demo: '#'
+      },
+      {
+        category: 'operation', /* 운영 */
+        icon: '🛠️',
+        gradient: 'linear-gradient(135deg, #fa709a, #fee140)',
+        title: '운영 모니터링 대시보드',
+        desc: '실시간 시스템 현황 모니터링 및 장애 알림 대시보드 구축',
+        tags: ['모니터링', 'Chart.js', 'WebSocket'],
+        github: '#',
+        demo: '#'
+      }
+    ];
+
+    // 프로젝트 카드 HTML을 그리드에 삽입
+    function renderProjects() {
+      const grid = document.getElementById('projectsGrid');
+      // map: 배열의 각 항목을 HTML 문자열로 변환
+      // join: 배열을 하나의 문자열로 합치기
+      grid.innerHTML = projects.map(p => `
+        <div class="project-card" data-category="${p.category}">
+          <div class="card-thumbnail" style="background: ${p.gradient}">${p.icon}</div>
+          <div class="card-body">
+            <h3 class="card-title">${p.title}</h3>
+            <p class="card-desc">${p.desc}</p>
+            <div class="card-tags">
+              ${p.tags.map(t => `<span class="card-tag">${t}</span>`).join('')}
+            </div>
+            <div class="card-links">
+              <a href="${p.github}" class="link-github"><i class="fab fa-github"></i> GitHub</a>
+              <a href="${p.demo}" class="link-demo">데모 보기 →</a>
+            </div>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    // 카테고리 필터: 해당 카테고리 외 카드에 hidden 클래스 추가
+    function filterProjects(category, clickedBtn) {
+      // 모든 필터 버튼에서 active 클래스 제거
+      document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
+      // 클릭한 버튼에만 active 추가
+      clickedBtn.classList.add('active');
+
+      document.querySelectorAll('.project-card').forEach(card => {
+        // 'all'이거나 해당 카테고리면 보이게, 아니면 숨기게
+        const show = category === 'all' || card.dataset.category === category;
+        card.classList.toggle('hidden', !show);
+      });
+    }
+
+    renderProjects(); // 페이지 로드 시 카드 렌더링
+
+
+    /* ========================================================
+       기능 4. 블로그 / 학습 기록 렌더링
+       서버 없이 JS 배열로 관리 (docs의 A안)
+    ======================================================== */
+
+    const posts = [
+      {
+        date: '2026-05-06',
+        title: 'Todo 앱 만들기 — localStorage로 데이터 영구 저장',
+        tags: ['HTML', 'JS', 'localStorage'],
+        summary: '서버 없이 브라우저 저장소만으로 할 일 목록을 유지하는 방법을 배웠다.'
+      },
+      {
+        date: '2026-04-20',
+        title: 'CSS Grid 완전 정복 — auto-fill vs auto-fit 차이',
+        tags: ['CSS', 'Grid', 'Layout'],
+        summary: 'auto-fill과 auto-fit의 미묘한 차이를 실험으로 확인하고 정리했다.'
+      },
+      {
+        date: '2026-04-05',
+        title: 'Fetch API로 날씨 데이터 불러오기',
+        tags: ['JavaScript', 'API', 'Async'],
+        summary: 'Promise와 async/await 두 가지 방식으로 외부 API를 호출하는 법을 정리했다.'
+      },
+      {
+        date: '2026-03-18',
+        title: 'Flexbox로 레이아웃 잡기 — 자주 쓰는 패턴 7가지',
+        tags: ['CSS', 'Flexbox'],
+        summary: '실무에서 가장 많이 쓰는 Flexbox 레이아웃 패턴을 코드와 함께 정리했다.'
+      },
+      {
+        date: '2026-03-01',
+        title: '처음으로 HTML/CSS 개인 프로젝트 시작',
+        tags: ['HTML', 'CSS', '회고'],
+        summary: '개발을 처음 시작하며 느낀 점과 앞으로의 학습 방향을 정리했다.'
+      }
+    ];
+
+    // 블로그 목록 렌더링
+    document.getElementById('blogList').innerHTML = posts.map(p => `
+      <a class="blog-item" href="#">
+        <div class="blog-date">${p.date}</div>
+        <div class="blog-content">
+          <div class="blog-title">${p.title}</div>
+          <div class="blog-summary">${p.summary}</div>
+          <div class="blog-tags">
+            ${p.tags.map(t => `<span class="blog-tag">${t}</span>`).join('')}
+          </div>
+        </div>
+      </a>
+    `).join('');
+
+
+    /* ========================================================
+       기능 5. 이메일 난독화 + 클립보드 복사
+       봇은 JS를 실행하지 못하므로 이메일을 분리해서 조합
+    ======================================================== */
+
+    // 이메일을 두 조각으로 나눠서 JS로 합침 → 스팸봇 수집 방지
+    const email = ['hg.cheon002', 'gmail.com'].join('@');
+
+    document.getElementById('emailText').textContent = email;
+    document.getElementById('emailLink').href = 'mailto:' + email;
+
+    // "복사" 버튼: 클립보드에 이메일 복사
+    function copyEmail() {
+      navigator.clipboard.writeText(email).then(() => {
+        const btn = document.querySelector('.copy-btn');
+        btn.textContent = '✓ 복사됨!';
+        setTimeout(() => { btn.textContent = '복사'; }, 1500);
+      });
+    }
+  </script>
+</body>
+</html>
